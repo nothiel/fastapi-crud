@@ -1,4 +1,4 @@
-from model import User
+from model import User, UpdateUser
 from fastapi import FastAPI, Response, status
 from fastapi.encoders import jsonable_encoder
 import controller
@@ -26,16 +26,27 @@ def consulta(valor, res: Response):
         return {'erro': 'Não sei qual erro mas erro'} 
 
 @app.post("/cadastro")
-def cadastro(req: User, res: Response):
+async def cadastro(req: User, res: Response):
     try:
         request = jsonable_encoder(req)
-        if ('user' and 'passwd' and 'full_name' and 'birthday' and 'forum_nickname' in request):
-            return {'Message': 'Cu'}
+        integrity = test_integrity(request)
+        if len(request) == 5 and integrity: 
+            results = await controller.cadastro_usuario(request)
+            print(results)
+            if results['status'] == 0:
+                res.status_code = status.HTTP_400_BAD_REQUEST
+                return {'ERRO': 'USUARIO JÁ CADASTRADO'}
+            elif results:
+                return results
+            else:
+                res.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+                return {'ERRO' : 'BRABO'}
         else:
             res.status_code = status.HTTP_400_BAD_REQUEST
             return {'ERRO': 'Informações faltantes'}
-    except:
-        return {'ERRO': 'Não sei qual'}
+    except Exception as erro:
+        print(erro)
+        return {'ERRO': erro}
 
 @app.put("/update/{id}")
 def update_usuario(id, req: UpdateUser, res: Response):
@@ -53,4 +64,10 @@ def update_usuario(id, req: UpdateUser, res: Response):
         res.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return {'ERRO': 'não sei qual'}
 
-    
+
+
+def test_integrity(req):
+    for value in req:
+        if not req[value]:
+            return False
+    return True
