@@ -2,7 +2,7 @@ import motor.motor_asyncio
 from bson.objectid import ObjectId
 from datetime import datetime
 
-mongo_info = 'mongodb+srv://userToken:randompassword@apinodecluster.stepb.mongodb.net/api_py?retryWrites=true&w=majority'
+mongo_info = ''
 client = motor.motor_asyncio.AsyncIOMotorClient(mongo_info)
 db = client.api_py
 user_collection = db.get_collection("usuario")
