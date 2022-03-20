@@ -1,5 +1,6 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel, create_engine, Session, select
+
+from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 
 class Users(SQLModel, table=True):
@@ -15,7 +16,7 @@ class Users(SQLModel, table=True):
         setattr(self, key, value)
 
     @classmethod
-    def create_from(cls,user_dict):
+    def create_from(cls, user_dict):
         with Session(engine) as session:
             session.add(cls(**user_dict))
             session.commit()
@@ -26,7 +27,6 @@ class Users(SQLModel, table=True):
         with Session(engine) as session:
             return session.exec(select(cls)).all()
 
-
     @classmethod
     def get_by_id(cls, id):
         with Session(engine) as session:
@@ -36,7 +36,7 @@ class Users(SQLModel, table=True):
     def update_by_id(cls, id, set):
         user = cls.get_by_id(id)
         with Session(engine) as session:
-            for k,v in set.items():
+            for k, v in set.items():
                 user[k] = v
             session.add(user)
             session.commit()
@@ -50,16 +50,14 @@ class Users(SQLModel, table=True):
             session.delete(user)
             session.commit()
         return True
-        
-
 
 
 engine = create_engine('postgresql://postgres:postgres@db:5432/postgres')
 
+
 def create_db():
     SQLModel.metadata.create_all(engine)
 
+
 if __name__ == '__main__':
     SQLModel.metadata.create_all(engine)
-
-

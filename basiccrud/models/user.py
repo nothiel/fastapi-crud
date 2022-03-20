@@ -6,6 +6,7 @@ class UserSchema(BaseModel):
     password: str
     nickname: str
 
+
 class ModifyUserSchema(BaseModel):
     login: str | None
     password: str | None
@@ -15,4 +16,4 @@ class ModifyUserSchema(BaseModel):
     def any_of(cls, v):
         if not any(v.values()):
             raise ValueError('no field inserted')
-        return v 
+        return v
